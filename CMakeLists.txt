@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Projekt_Semestralny)
+project(Monkey_Typer)
 
 set(CMAKE_CXX_STANDARD 20)
 
