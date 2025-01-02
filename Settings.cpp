@@ -67,6 +67,8 @@ Settings::Settings(int lvl, int language, int gameFontParameter) {
     buttonSave.setSize(sf::Vector2f(300, 100));
     buttonSave.setPosition(362, 800);
     buttonSave.setFillColor(sf::Color::Yellow);
+    buttonSave.setOutlineThickness(5);
+    buttonSave.setOutlineColor(sf::Color::Blue);
 
     saveText.setFont(mainFont);
     saveText.setString("Save");
@@ -162,6 +164,13 @@ void Settings::renderSettings() {
     Menu::window.draw(saveText);
 
     Menu::window.display();
+
+    if(!isSettings) {
+        Menu::openSettingsFlag = false;
+        Menu::languageFlag = language;
+        Menu::fontFlag = gameFontParameter;
+        Menu::lvlFlag = lvl;
+    }
 }
 
 void Settings::setupText(sf::Text& text, std::string str){
@@ -202,7 +211,7 @@ void Settings::handleMouseClick(int x, int y) {
         }
         setGameFont(gameFontParameter);
     } else if (buttonSave.getGlobalBounds().contains(mousePos)){
-        isSettings = false;
+        closeSettings();
     }
 }
 
@@ -218,18 +227,8 @@ void Settings::processEvents() {
     }
 }
 
-int Settings::getLvl() {
-    return lvl;
-}
 
-int Settings::getFontParameter() {
-    return gameFontParameter;
-}
 
-int Settings::getLanguage() {
-    return language;
+void Settings::closeSettings() {
+    isSettings = false;
 }
-
-//int Settings::getSettingsFlag() {
-//    return 0;
-//}

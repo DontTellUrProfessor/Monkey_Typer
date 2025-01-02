@@ -8,6 +8,8 @@ public:
     static sf::RenderWindow window;
     Menu(int width, int height, int lvl, int language, int gameFontParameter);
     void run();
+    static bool openSettingsFlag;
+    static int languageFlag, fontFlag, lvlFlag;
 
 private:
     sf::RectangleShape buttonStart, buttonSettings, button3;
@@ -18,11 +20,18 @@ private:
     sf::Sprite backgroundSprite;
     Settings* settings = nullptr;
     bool openSettings = false;
-    int isSettings = 1;
+
 
     void setupButtonText(sf::Text& text, const std::string& str, const sf::RectangleShape& button);
     void setupSettingsText(sf::Text& text, const std::string& str);
     void processEvents();
     void handleMouseClick(int x, int y);
     void render();
+    void setSettings();
+
+    void setGameFont(int gameFontParameter);
+
+    void setLvl(int lvl);
+
+    void setLanguage(int language);
 };

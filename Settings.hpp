@@ -10,11 +10,7 @@ public:
     void renderSettings();
     void processEvents();
     void handleMouseClick(int x, int y);
-    int getSettingsFlag();
 
-    int getFontParameter();
-    int getLvl();
-    int getLanguage();
 
 private:
     int lvl, language, gameFontParameter;
@@ -32,5 +28,6 @@ private:
     void setLanguage(int language);
     void setLvl(int lvl);
     void setGameFont(int gameFontParameter);
+    void closeSettings();
 
 };

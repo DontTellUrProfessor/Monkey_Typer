@@ -2,10 +2,13 @@
 #include "Settings.hpp"
 
 sf::RenderWindow Menu::window;
+bool Menu::openSettingsFlag = false;
+int Menu::lvlFlag = 1;
+int Menu::fontFlag = 1;
+int Menu::languageFlag = 1;
 
 Menu::Menu(int width, int height, int lvl, int language, int gameFontParameter) {
     window.create(sf::VideoMode(width, height), "MONKEY TYPER", sf::Style::Titlebar | sf::Style::Close);
-
     this->lvl = lvl;
     this->gameFontParameter = gameFontParameter;
     this->language = language;
@@ -40,57 +43,9 @@ Menu::Menu(int width, int height, int lvl, int language, int gameFontParameter) 
     }
 
 
-    switch (gameFontParameter) {
-        case 1:
-            if (!gameplayFont.loadFromFile("../assets/main.ttf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        case 2:
-            if (!gameplayFont.loadFromFile("../assets/RedGlass.ttf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        case 3:
-            if (!gameplayFont.loadFromFile("../assets/StarWars.otf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        case 4:
-            if (!gameplayFont.loadFromFile("../assets/Azonix.otf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        default:
-            if (!gameplayFont.loadFromFile("../assets/main.ttf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-    }
-
-    switch (lvl) {
-        case 1:
-            setupSettingsText(lvlText, "Difficulty: Easy");
-            break;
-        case 2:
-            setupSettingsText(lvlText, "Difficulty: Medium");
-            break;
-        case 3:
-            setupSettingsText(lvlText, "Difficulty: Hard");
-            break;
-        case 4:
-            setupSettingsText(lvlText, "Difficulty: Pro");
-            break;
-    }
-
-    switch (language) {
-        case 1:
-            setupSettingsText(langText, "Language: ENG");
-            break;
-        case 2:
-            setupSettingsText(langText, "Language: PL");
-            break;
-    }
+    setGameFont(gameFontParameter);
+    setLvl(lvl);
+    setLanguage(language);
 
     setupButtonText(text1, "Play", buttonStart);
     setupButtonText(text2, "Settings", buttonSettings);
@@ -120,23 +75,85 @@ Menu::Menu(int width, int height, int lvl, int language, int gameFontParameter) 
     langText.setPosition(100, 250);
     fontText.setPosition(100, 300);
     testFontText.setPosition(200, 300);
+
+
+}
+
+void Menu::setLanguage(int language) {
+    switch (language) {
+        case 1:
+            setupSettingsText(langText, "Language: ENG");
+            break;
+        case 2:
+            setupSettingsText(langText, "Language: PL");
+            break;
+    }
+}
+
+void Menu::setLvl(int lvl) {
+    switch (lvl) {
+        case 1:
+            setupSettingsText(lvlText, "Difficulty: Easy");
+            break;
+        case 2:
+            setupSettingsText(lvlText, "Difficulty: Medium");
+            break;
+        case 3:
+            setupSettingsText(lvlText, "Difficulty: Hard");
+            break;
+        case 4:
+            setupSettingsText(lvlText, "Difficulty: Pro");
+            break;
+    }
+}
+
+void Menu::setGameFont(int gameFontParameter) {
+    switch (gameFontParameter) {
+        case 1:
+            if (!gameplayFont.loadFromFile("../assets/main.ttf")) {
+                std::cerr << "Error loading font\n";
+            }
+            break;
+        case 2:
+            if (!gameplayFont.loadFromFile("../assets/RedGlass.ttf")) {
+                std::cerr << "Error loading font\n";
+            }
+            break;
+        case 3:
+            if (!gameplayFont.loadFromFile("../assets/StarWars.otf")) {
+                std::cerr << "Error loading font\n";
+            }
+            break;
+        case 4:
+            if (!gameplayFont.loadFromFile("../assets/Azonix.otf")) {
+                std::cerr << "Error loading font\n";
+            }
+            break;
+        default:
+            if (!gameplayFont.loadFromFile("../assets/main.ttf")) {
+                std::cerr << "Error loading font\n";
+            }
+            break;
+    }
 }
 
 void Menu::run() {
     while (window.isOpen()) {
+        setGameFont(gameFontParameter);
+        setLvl(lvl);
+        setLanguage(language);
         if (openSettings && settings) {
             settings->renderSettings();
             settings->processEvents();
-            lvl = settings->getLvl();
-            language = settings->getLanguage();
-            gameFontParameter = settings->getFontParameter();
-            isSettings = settings->getSettingsFlag();
+            setSettings();
         } else {
             this -> processEvents();
             this -> render();
         }
     }
 }
+
+
 
 void Menu::setupButtonText(sf::Text& text, const std::string& str, const sf::RectangleShape& button) {
     text.setFont(font);
@@ -182,6 +199,7 @@ void Menu::handleMouseClick(int x, int y) {
     } else if (buttonSettings.getGlobalBounds().contains(mousePos)) {
         std::cout << "Button settings clicked\n";
         openSettings = true;
+        openSettingsFlag = true;
         settings = new Settings(lvl, language, gameFontParameter); // Create Settings instance
     } else if (button3.getGlobalBounds().contains(mousePos)) {
         std::cout << "Exit button clicked\n";
@@ -207,3 +225,11 @@ void Menu::render() {
         window.draw(testFontText);
         window.display();
 }
+
+void Menu::setSettings() {
+    this->lvl = lvlFlag;
+    this->language = languageFlag;
+    this->gameFontParameter = fontFlag;
+    this->openSettings = openSettingsFlag;
+}
+
