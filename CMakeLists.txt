@@ -24,5 +24,6 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(MonkeyTyper main.cpp
         Settings.cpp
-        Menu.cpp)
+        Menu.cpp
+        Game.cpp)
 target_link_libraries(MonkeyTyper fmt sfml-graphics)

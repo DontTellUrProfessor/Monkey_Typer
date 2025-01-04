@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Settings.hpp"
+#include "Game.hpp"
 
 class Menu {
 public:
@@ -19,7 +20,9 @@ private:
     sf::Texture backgroundTexture;
     sf::Sprite backgroundSprite;
     Settings* settings = nullptr;
+    Game* game = nullptr;
     bool openSettings = false;
+    bool openGame = false;
 
 
     void setupButtonText(sf::Text& text, const std::string& str, const sf::RectangleShape& button);

@@ -1,5 +1,6 @@
 #include "Menu.hpp"
 #include "Settings.hpp"
+#include "Game.hpp"
 
 sf::RenderWindow Menu::window;
 bool Menu::openSettingsFlag = false;
@@ -146,6 +147,10 @@ void Menu::run() {
             settings->renderSettings();
             settings->processEvents();
             setSettings();
+        }else if(openGame && game){
+            game->renderGame();
+            game->processGame();
+
         } else {
             this -> processEvents();
             this -> render();
@@ -195,9 +200,9 @@ void Menu::handleMouseClick(int x, int y) {
     sf::Vector2f mousePos(x, y);
 
     if (buttonStart.getGlobalBounds().contains(mousePos)) {
-        std::cout << "Play button clicked\n";
+        openGame = true;
+        game = new Game(lvl, language, gameFontParameter);
     } else if (buttonSettings.getGlobalBounds().contains(mousePos)) {
-        std::cout << "Button settings clicked\n";
         openSettings = true;
         openSettingsFlag = true;
         settings = new Settings(lvl, language, gameFontParameter); // Create Settings instance
