@@ -15,7 +15,6 @@ public:
     Game(int lvl, int language, int gameFontParameter);
     void renderGame();
     void processGame();
-    void runGame();
 
 
 private:
@@ -32,9 +31,8 @@ private:
     std::vector<sf::Text> activeWords;
     float spawnInterval = 0.25f;
     float timeSinceLastSpawn = 0.0f;
-
+    void loadWordList(const std::string& filePath);
     void setLanguage(int language);
-    void setLvl(int lvl);
     void setGameFont(int gameFontParameter);
 
 

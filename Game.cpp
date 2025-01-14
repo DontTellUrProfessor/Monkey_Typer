@@ -6,7 +6,6 @@ Game::Game(int lvl, int language, int gameFontParameter) {
     this->language = language;
     this->gameFontParameter = gameFontParameter;
     setLanguage(language);
-    setLvl(lvl);
     setGameFont(gameFontParameter);
 
     if (!bananaScoreIcon.loadFromFile("../assets/banana_Points.png")) {
@@ -48,19 +47,19 @@ void Game::renderGame() {
 
         // Generate random position with overlap checking
         bool validPosition = false;
-        float xPosition = Menu::window.getSize().x + rand() % 300; // Random x offset from the right
+        float xPosition = Menu::window.getSize().x + rand() % 300; // Random x offset
         float yPosition = 0;
-        int maxAttempts = 10; // Limit attempts to find a valid position
+        int maxAttempts = 10; // Limit attempts
         int attempt = 0;
 
         while (!validPosition && attempt < maxAttempts) {
             yPosition = rand() % (Menu::window.getSize().y - 80); // Random vertical position
             validPosition = true;
 
-            // Check overlap with existing words
+            // Check overlap
             for (const auto& word : activeWords) {
-                if (std::abs(word.getPosition().y - yPosition) < 50 && // Minimum vertical distance
-                    std::abs(word.getPosition().x - xPosition) < 220) { // Minimum horizontal distance
+                if (std::abs(word.getPosition().y - yPosition) < 50 &&
+                    std::abs(word.getPosition().x - xPosition) < 220) {
                     validPosition = false;
                     break;
                 }
@@ -68,16 +67,55 @@ void Game::renderGame() {
             attempt++;
         }
 
-        // If a valid position was found, spawn the word
         if (validPosition) {
             text.setPosition(xPosition, yPosition);
-            activeWords.push_back(text);  // Add the new word to activeWords
-            wordList.pop_back();  // Remove the word from wordList so it's not added again
-            timeSinceLastSpawn = 0.0f;  // Reset the spawn timer
+            activeWords.push_back(text);
+            wordList.pop_back();
+            timeSinceLastSpawn = 0.0f;
         }
     }
 
-    // Check if userInput matches any active word
+    // Move words to the left
+    for (auto& word : activeWords) {
+        word.move(-(lvl * 20) * deltaTime, 0); // Move left
+    }
+
+    // Clear the window
+    Menu::window.clear();
+
+    // Draw the active words with highlighting
+    for (const auto& word : activeWords) {
+        std::string wordStr = word.getString();
+        sf::Text matchingPart, remainingPart;
+
+        // Check for match
+        if (wordStr.find(userInput) == 0 && !userInput.empty()) {
+            // Create the matching part
+            matchingPart.setFont(font);
+            matchingPart.setString(userInput);
+            matchingPart.setCharacterSize(34);
+            matchingPart.setFillColor(sf::Color::Red);
+            matchingPart.setPosition(word.getPosition());
+
+            // Create the remaining part
+            remainingPart.setFont(font);
+            remainingPart.setString(wordStr.substr(userInput.size()));
+            remainingPart.setCharacterSize(34);
+            remainingPart.setFillColor(sf::Color::White);
+            remainingPart.setPosition(
+                    matchingPart.getPosition().x + matchingPart.getGlobalBounds().width,
+                    word.getPosition().y
+            );
+
+            // Draw both parts
+            Menu::window.draw(matchingPart);
+            Menu::window.draw(remainingPart);
+        } else {
+            // Draw the word as-is
+            Menu::window.draw(word);
+        }
+    }
+
     std::vector<sf::Text> wordsToRemove; // List of words to remove
     for (const auto& word : activeWords) {
         if (word.getString() == userInput) {
@@ -104,33 +142,12 @@ void Game::renderGame() {
         pointsText.setString("Score: " + std::to_string(pointsCounter));
     }
 
-    // Move words to the left
-    for (auto& word : activeWords) {
-        word.move(-(lvl * 20) * deltaTime, 0); // Move left at speed depending on level
-    }
-
-    // Remove words that are off-screen
-    activeWords.erase(
-            std::remove_if(activeWords.begin(), activeWords.end(),
-                           [](const sf::Text& word) {
-                               return word.getPosition().x + word.getGlobalBounds().width < 0;
-                           }),
-            activeWords.end());
-
-    // Clear the window and draw everything
-    Menu::window.clear();
-
-    // Draw the active moving words
-    for (const auto& word : activeWords) {
-        Menu::window.draw(word);
-    }
-
     // Optionally, draw other UI elements
     Menu::window.draw(typedText);
     Menu::window.draw(pointsText);
     Menu::window.draw(iconSprite);
 
-    Menu::window.display();  // Display the updated frame
+    Menu::window.display(); // Display everything
 }
 
 
@@ -160,69 +177,54 @@ void Game::processGame() {
     }
 }
 
-void Game::runGame(){
 
+void Game::loadWordList(const std::string& filePath){
+    std::ifstream file(filePath);
+    std::random_device rd;
+    std::mt19937 generator(rd());
 
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open the file: " << filePath << "\n";
+        return;
+    }
 
+    wordList.clear();
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string word;
+        while (iss >> word) {
+            wordList.push_back(word);
+        }
+    }
+
+    // Shuffle the words
+    std::shuffle(wordList.begin(), wordList.end(), generator);
+
+    // Display the shuffled words (optional, can be removed in production)
+    for (const auto& shuffledWord : wordList) {
+        std::cout << shuffledWord << " ";
+    }
+    std::cout << "\n";
+
+    file.close();
 }
-
-
 
 void Game::setLanguage(int language) {
     switch (language) {
         case 1:
-
+            loadWordList("../assets/ENG_Wordlist.txt");
             break;
         case 2:
-            std::string line;
-            std::ifstream file("../assets/PL_Wordlist.txt");
-            std::random_device rd;
-            std::mt19937 generator(rd());
-            if (!file.is_open()) {
-                std::cerr << "Error: Could not open the wordlist file \n";
-                return;
-            }
-            Game::wordList.clear();
-            while (std::getline(file, line)) {
-
-                // Split the line into words
-                std::istringstream iss(line);
-                std::string word;
-                while (iss >> word) {
-                    wordList.push_back(word);
-                }
-
-                // Shuffle the words
-                std::shuffle(wordList.begin(), wordList.end(), generator);
-
-                // Display the shuffled words
-                for (const auto& shuffledWord : wordList) {
-                    std::cout << shuffledWord << " ";
-                }
-                std::cout << "\n";
-            }
-
-            file.close();
+            loadWordList("../assets/PL_Wordlist.txt");
+            break;
+        default:
+            std::cerr << "Error: Unsupported language selection\n";
             break;
     }
 }
 
-void Game::setLvl(int lvl) {
-    switch (lvl) {
-        case 1:
 
-            break;
-        case 2:
-
-            break;
-        case 3:
-
-            break;
-        case 4:
-
-            break;
-    }
-}
 
 void Game::setGameFont(int gameFontParameter) {
     switch (gameFontParameter) {
