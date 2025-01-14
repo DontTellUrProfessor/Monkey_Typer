@@ -3,6 +3,7 @@ project(Monkey_Typer)
 
 set(CMAKE_CXX_STANDARD 20)
 
+#set(BUILD_SHARED_LIBS FALSE) on Windows - uncomment this line
 
 include(FetchContent)
 
