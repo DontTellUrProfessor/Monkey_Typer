@@ -19,9 +19,13 @@ public:
 
 
 private:
+
     int lvl, language, gameFontParameter;
+    int pointsCounter = 0;
     sf::Font font;
-    sf::Text typedText, targetText;
+    sf::Text typedText, targetText, pointsText;
+    sf::Texture bananaScoreIcon;
+    sf::Sprite iconSprite;
     std::string userInput;
     std::vector<std::string> wordList;
     sf::Clock clock;
