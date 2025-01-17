@@ -8,6 +8,10 @@ Game::Game(int lvl, int language, int gameFontParameter) {
     setLanguage(language);
     setGameFont(gameFontParameter);
 
+    if (!scoreFont.loadFromFile("../assets/main.ttf")) {
+        std::cerr << "Error loading font\n";
+    }
+
     if (!bananaScoreIcon.loadFromFile("../assets/banana_Points.png")) {
         std::cerr << "Error loading banana Icon\n";
     }
@@ -25,7 +29,7 @@ Game::Game(int lvl, int language, int gameFontParameter) {
     typedText.setFillColor(sf::Color::Yellow);
     typedText.setPosition(0,975);
 
-    pointsText.setFont(font);
+    pointsText.setFont(scoreFont);
     pointsText.setString("Score: " + std::to_string(pointsCounter));
     pointsText.setCharacterSize(45);
     pointsText.setFillColor(sf::Color::Yellow);
@@ -239,11 +243,6 @@ void Game::setGameFont(int gameFontParameter) {
             }
             break;
         case 3:
-            if (!font.loadFromFile("../assets/StarWars.otf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        case 4:
             if (!font.loadFromFile("../assets/Azonix.otf")) {
                 std::cerr << "Error loading font\n";
             }

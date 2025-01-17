@@ -121,11 +121,6 @@ void Menu::setGameFont(int gameFontParameter) {
             }
             break;
         case 3:
-            if (!gameplayFont.loadFromFile("../assets/StarWars.otf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        case 4:
             if (!gameplayFont.loadFromFile("../assets/Azonix.otf")) {
                 std::cerr << "Error loading font\n";
             }

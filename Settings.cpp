@@ -100,11 +100,6 @@ void Settings::setGameFont(int gameFontParameter) {
             }
             break;
         case 3:
-            if (!showFont.loadFromFile("../assets/StarWars.otf")) {
-                std::cerr << "Error loading font\n";
-            }
-            break;
-        case 4:
             if (!showFont.loadFromFile("../assets/Azonix.otf")) {
                 std::cerr << "Error loading font\n";
             }
@@ -206,7 +201,7 @@ void Settings::handleMouseClick(int x, int y) {
         setLvl(lvl);
     } else if (fontButton.getGlobalBounds().contains(mousePos)){
         gameFontParameter++;
-        if (gameFontParameter > 4) {
+        if (gameFontParameter > 3) {
             gameFontParameter = 1;
         }
         setGameFont(gameFontParameter);

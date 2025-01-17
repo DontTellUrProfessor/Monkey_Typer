@@ -21,7 +21,7 @@ private:
 
     int lvl, language, gameFontParameter;
     int pointsCounter = 0;
-    sf::Font font;
+    sf::Font font, scoreFont;
     sf::Text typedText, targetText, pointsText;
     sf::Texture bananaScoreIcon;
     sf::Sprite iconSprite;
